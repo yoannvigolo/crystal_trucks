@@ -131,7 +131,43 @@ class CrystalsVsTrucksGame(arcade.Window):
         self.compute_sprites()
 
     def interpret(self, command, args):
-        pass
+        if command == "MOVE":
+            if len(args) != 3:
+                print("invalid move command, must have 3 arguments", command, args)
+                return
+            truck_id, x, y = (int(a) for a in args)
+            if not 0 <= truck_id < self.nb_trucks:
+                print("invalid move command, invalid truck id", command, args)
+                return
+            if not 0 <= x < self.width:
+                print("invalid move command, invalid x", command, args)
+                return
+            if not 0 <= y < self.height:
+                print("invalid move command, invalid y", command, args)
+                return
+            # TODO déplacer que d'une case
+            self.trucks[truck_id] = [x, y]
+        elif command == "DIG":
+            if len(args) != 3:
+                print("invalid dig command, must have 3 arguments", command, args)
+                return
+            truck_id, x, y = (int(a) for a in args)
+            if not 0 <= truck_id < self.nb_trucks:
+                print("invalid dig command, invalid truck id", command, args)
+                return
+            if not 0 <= x < self.width:
+                print("invalid dig command, invalid x", command, args)
+                return
+            if not 0 <= y < self.height:
+                print("invalid dig command, invalid y", command, args)
+                return
+            truck_x, truck_y = self.trucks[truck_id]
+            if x != truck_x or y != truck_y:
+                print("invalid dig command, cannot dig on non current position")
+                return
+            self.grid[y][x] = max(0, self.grid[y][x] - 1)
+        else:
+            print("invalid command", command, args)
 
     def on_key_press(self, key, key_modifiers):
         """
