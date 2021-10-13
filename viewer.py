@@ -13,7 +13,6 @@ class Truck:
         self.movements = {}
 
     def move(self, turn, x, y):
-        # TODO déplacer que d'une case
         self.movements[turn] = (x, y)
         if not (self.x - 1 <= x <= self.x + 1 and self.y - 1 <= y <= self.y + 1):
             print(
