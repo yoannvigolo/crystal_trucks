@@ -15,12 +15,25 @@ class Truck:
     def move(self, turn, x, y):
         # TODO déplacer que d'une case
         self.movements[turn] = (x, y)
+        if not (self.x - 1 <= x <= self.x + 1 and self.y - 1 <= y <= self.y + 1):
+            print(
+                f"invalid move, too far away, turn {turn} to {x} {y} from {self.x} {self.y}"
+            )
+        if self.x < x:
+            self.x += 1
+        elif self.x > x:
+            self.x -= 1
+        elif self.y < y:
+            self.y += 1
+        elif self.y > y:
+            self.y -= 1
 
     def position_at(self, clock):
         clock_turn = int(clock)
         ratio = clock - clock_turn
         to_turn = -2
         from_x, from_y = self.x, self.y
+        # print(self.movements)
         for turn, (x, y) in sorted(self.movements.items()):
             if turn < clock_turn:
                 from_x, from_y = x, y
@@ -28,13 +41,11 @@ class Truck:
                 to_x, to_y, to_turn = x, y, turn
         # print(clock_turn, to_turn, "from", from_x, from_y)
         if to_turn == clock_turn:
-            self.x, self.y = to_x, to_y
             pos_x, pos_y = (
                 from_x + (to_x - from_x) * ratio,
                 from_y + (to_y - from_y) * ratio,
             )
         else:
-            self.x, self.y = from_x, from_y
             pos_x, pos_y = from_x, from_y
         # print("    ", self.x, self.y, pos_x, pos_y)
         return pos_x, pos_y
@@ -162,6 +173,9 @@ class CrystalsVsTrucksGame(arcade.Window):
             time = int(time)
             if time < self.clock:
                 self.interpret(time, command, args)
+
+        # for truck_index, truck in enumerate(self.trucks):
+        #     print(truck_index, truck.x, truck.y)
 
         self.compute_sprites()
 
