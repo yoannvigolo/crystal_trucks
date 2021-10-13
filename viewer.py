@@ -40,7 +40,7 @@ class CrystalsVsTrucksGame(arcade.Window):
                             self.initial_grid[-1].append(0)
                         else:
                             self.initial_grid[-1].append(int(char))
-                    for x in range(len(self.initial_grid[-1]), self.width):
+                    for _ in range(len(self.initial_grid[-1]), self.width):
                         self.initial_grid[-1].append(0)
                     self.grid = copy.deepcopy(self.initial_grid)
                 elif line.startswith("### End Grid ###"):
