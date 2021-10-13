@@ -1,7 +1,7 @@
 import arcade
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1024
+SCREEN_HEIGHT = 768
 SCREEN_TITLE = "Cristals VS Trucks"
 
 
@@ -57,10 +57,19 @@ class CristalsVsTrucksGame(arcade.Window):
                     else:
                         self.commands.append(" ".join(parts))
 
+    def position_to_px(self, x, y):
+        return (x + 0.5) * self.cell_width, (y + 0.5) * self.cell_height
+
     def setup(self):
         """Set up the game variables. Call to re-start the game."""
         # Create your sprites and sprite lists here
-        pass
+        self.truck_list = arcade.SpriteList()
+        for truck_id in range(self.nb_trucks):
+            truck_sprite = arcade.Sprite("./towtruck.png", 1)
+            x, y = self.position_to_px(0, truck_id)
+            truck_sprite.center_x = x - truck_sprite.width // 2 + 10
+            truck_sprite.center_y = y - truck_sprite.height // 2 - 10
+            self.truck_list.append(truck_sprite)
 
     def on_draw(self):
         """
@@ -83,7 +92,7 @@ class CristalsVsTrucksGame(arcade.Window):
                         font_name="Kenney Pixel Square",
                     )
 
-        # Call draw() on all your sprite lists below
+        self.truck_list.draw()
 
     def on_update(self, delta_time):
         """

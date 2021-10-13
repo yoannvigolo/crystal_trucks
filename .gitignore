@@ -1,6 +1,8 @@
 # sample command file
 *.sample.txt
 
+*pack*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
