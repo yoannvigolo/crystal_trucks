@@ -8,8 +8,8 @@ SCREEN_TITLE = "Crystals VS Trucks"
 
 class Truck:
     def __init__(self, x, y):
-        self.x = 0
-        self.y = 0
+        self.x = x
+        self.y = y
         self.movements = {}
 
     def move(self, turn, x, y):
@@ -17,7 +17,27 @@ class Truck:
         self.movements[turn] = (x, y)
 
     def position_at(self, clock):
-        return self.x, self.y
+        clock_turn = int(clock)
+        ratio = clock - clock_turn
+        to_turn = -2
+        from_x, from_y = self.x, self.y
+        for turn, (x, y) in sorted(self.movements.items()):
+            if turn < clock_turn:
+                from_x, from_y = x, y
+            else:
+                to_x, to_y, to_turn = x, y, turn
+        # print(clock_turn, to_turn, "from", from_x, from_y)
+        if to_turn == clock_turn:
+            self.x, self.y = to_x, to_y
+            pos_x, pos_y = (
+                from_x + (to_x - from_x) * ratio,
+                from_y + (to_y - from_y) * ratio,
+            )
+        else:
+            self.x, self.y = from_x, from_y
+            pos_x, pos_y = from_x, from_y
+        # print("    ", self.x, self.y, pos_x, pos_y)
+        return pos_x, pos_y
 
 
 class CrystalsVsTrucksGame(arcade.Window):
@@ -134,7 +154,7 @@ class CrystalsVsTrucksGame(arcade.Window):
         need it.
         """
         self.clock += delta_time
-        print("new frame at", self.clock)
+        # print("new frame at", self.clock)
         self.grid = copy.deepcopy(self.initial_grid)
         self.trucks = [Truck(0, truck_id) for truck_id in range(self.nb_trucks)]
         for command in sorted(self.commands):
@@ -146,6 +166,7 @@ class CrystalsVsTrucksGame(arcade.Window):
         self.compute_sprites()
 
     def interpret(self, turn, command, args):
+        # print(turn, command, args)
         if command == "MOVE":
             if len(args) != 3:
                 print("invalid move command, must have 3 arguments", command, args)
@@ -176,6 +197,7 @@ class CrystalsVsTrucksGame(arcade.Window):
                 print("invalid dig command, invalid y", command, args)
                 return
             truck = self.trucks[truck_id]
+            truck.position_at(self.clock)
             if x != truck.x or y != truck.y:
                 print("invalid dig command, cannot dig on non current position")
                 print(f"    {truck_id=} {truck.x=} {truck.y=} dig at {x=} {y=}")
