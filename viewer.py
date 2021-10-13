@@ -6,6 +6,20 @@ SCREEN_HEIGHT = 768
 SCREEN_TITLE = "Crystals VS Trucks"
 
 
+class Truck:
+    def __init__(self, x, y):
+        self.x = 0
+        self.y = 0
+        self.movements = {}
+
+    def move(self, turn, x, y):
+        # TODO déplacer que d'une case
+        self.movements[turn] = (x, y)
+
+    def position_at(self, clock):
+        return self.x, self.y
+
+
 class CrystalsVsTrucksGame(arcade.Window):
     """
     Main application class.
@@ -47,7 +61,9 @@ class CrystalsVsTrucksGame(arcade.Window):
                     in_grid = False
                 elif line.startswith("trucks: "):
                     self.nb_trucks = int(line.split()[-1])
-                    self.trucks = [[0, truck_id] for truck_id in range(self.nb_trucks)]
+                    self.trucks = [
+                        Truck(0, truck_id) for truck_id in range(self.nb_trucks)
+                    ]
                 elif line.startswith("width: "):
                     self.grid_width = int(line.split()[-1])
                     self.cell_width = SCREEN_WIDTH // self.grid_width
@@ -88,9 +104,9 @@ class CrystalsVsTrucksGame(arcade.Window):
                     self.crystal_list.append(crystal_sprite)
 
         self.truck_list = arcade.SpriteList()
-        for truck_x, truck_y in self.trucks:
+        for truck in self.trucks:
             truck_sprite = arcade.Sprite("./towtruck.png", 1.5)
-            x, y = self.position_to_px(truck_x, truck_y)
+            x, y = self.position_to_px(*truck.position_at(self.clock))
             truck_sprite.center_x = x - truck_sprite.width // 2 + 10
             truck_sprite.center_y = y - truck_sprite.height // 2 - 10
             self.truck_list.append(truck_sprite)
@@ -120,16 +136,16 @@ class CrystalsVsTrucksGame(arcade.Window):
         self.clock += delta_time
         print("new frame at", self.clock)
         self.grid = copy.deepcopy(self.initial_grid)
-        self.trucks = [[0, truck_id] for truck_id in range(self.nb_trucks)]
+        self.trucks = [Truck(0, truck_id) for truck_id in range(self.nb_trucks)]
         for command in sorted(self.commands):
             time, command, *args = command
-            time = float(time)
+            time = int(time)
             if time < self.clock:
-                self.interpret(command, args)
+                self.interpret(time, command, args)
 
         self.compute_sprites()
 
-    def interpret(self, command, args):
+    def interpret(self, turn, command, args):
         if command == "MOVE":
             if len(args) != 3:
                 print("invalid move command, must have 3 arguments", command, args)
@@ -144,8 +160,7 @@ class CrystalsVsTrucksGame(arcade.Window):
             if not 0 <= y < self.height:
                 print("invalid move command, invalid y", command, args)
                 return
-            # TODO déplacer que d'une case
-            self.trucks[truck_id] = [x, y]
+            self.trucks[truck_id].move(turn, x, y)
         elif command == "DIG":
             if len(args) != 3:
                 print("invalid dig command, must have 3 arguments", command, args)
@@ -160,10 +175,10 @@ class CrystalsVsTrucksGame(arcade.Window):
             if not 0 <= y < self.height:
                 print("invalid dig command, invalid y", command, args)
                 return
-            truck_x, truck_y = self.trucks[truck_id]
-            if x != truck_x or y != truck_y:
+            truck = self.trucks[truck_id]
+            if x != truck.x or y != truck.y:
                 print("invalid dig command, cannot dig on non current position")
-                print(f"    {truck_id=} {truck_x=} {truck_y=} dig at {x=} {y=}")
+                print(f"    {truck_id=} {truck.x=} {truck.y=} dig at {x=} {y=}")
                 return
             self.grid[y][x] = max(0, self.grid[y][x] - 1)
         else:
