@@ -61,14 +61,33 @@ class CrystalsVsTrucksGame(arcade.Window):
                         self.commands.append(" ".join(parts))
 
     def position_to_px(self, x, y):
-        return (x + 0.5) * self.cell_width, (y + 0.5) * self.cell_height
+        return int((x + 0.5) * self.cell_width), int((y + 0.5) * self.cell_height)
 
     def setup(self):
         """Set up the game variables. Call to re-start the game."""
-        # Create your sprites and sprite lists here
+        self.crystal_list = arcade.SpriteList()
+        for cell_x in range(self.grid_width):
+            for cell_y in range(self.grid_height):
+                if self.grid[cell_y][cell_x] > 0:
+                    crystal_sprite = arcade.Sprite(
+                        "./element_blue_polygon_glossy.png", 0.5
+                    )
+                    x, y = self.position_to_px(cell_x, cell_y)
+                    crystal_sprite.center_x = x - crystal_sprite.width // 2
+                    crystal_sprite.center_y = y - crystal_sprite.height // 2 - 10
+                    self.crystal_list.append(crystal_sprite)
+                if self.grid[cell_y][cell_x] > 1:
+                    crystal_sprite = arcade.Sprite(
+                        "./element_red_polygon_glossy.png", 0.5
+                    )
+                    x, y = self.position_to_px(cell_x, cell_y)
+                    crystal_sprite.center_x = x - crystal_sprite.width // 2 + 10
+                    crystal_sprite.center_y = y - crystal_sprite.height // 2 - 10 + 10
+                    self.crystal_list.append(crystal_sprite)
+
         self.truck_list = arcade.SpriteList()
         for truck_x, truck_y in self.trucks:
-            truck_sprite = arcade.Sprite("./towtruck.png", 1)
+            truck_sprite = arcade.Sprite("./towtruck.png", 1.5)
             x, y = self.position_to_px(truck_x, truck_y)
             truck_sprite.center_x = x - truck_sprite.width // 2 + 10
             truck_sprite.center_y = y - truck_sprite.height // 2 - 10
@@ -83,18 +102,7 @@ class CrystalsVsTrucksGame(arcade.Window):
         # the screen to the background color, and erase what we drew last frame.
         arcade.start_render()
 
-        for y in range(self.grid_height):
-            for x in range(self.grid_width):
-                if self.grid[y][x]:
-                    arcade.draw_text(
-                        str(self.grid[y][x]),
-                        x * self.cell_width,
-                        y * self.cell_height,
-                        arcade.color.BLACK,
-                        font_size=20,
-                        font_name="Kenney Pixel Square",
-                    )
-
+        self.crystal_list.draw()
         self.truck_list.draw()
 
     def on_update(self, delta_time):
