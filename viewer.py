@@ -19,6 +19,7 @@ class CristalsVsTrucksGame(arcade.Window):
         self.cell_width = 1
         self.cell_height = 1
         self.commands = []
+        self.trucks = []
 
         arcade.set_background_color(arcade.color.AMAZON)
 
@@ -42,6 +43,8 @@ class CristalsVsTrucksGame(arcade.Window):
                     in_grid = False
                 elif line.startswith("trucks: "):
                     self.nb_trucks = int(line.split()[-1])
+                    for truck_id in range(self.nb_trucks):
+                        self.trucks.append([0, truck_id])
                 elif line.startswith("width: "):
                     self.grid_width = int(line.split()[-1])
                     self.cell_width = SCREEN_WIDTH // self.grid_width
@@ -64,9 +67,9 @@ class CristalsVsTrucksGame(arcade.Window):
         """Set up the game variables. Call to re-start the game."""
         # Create your sprites and sprite lists here
         self.truck_list = arcade.SpriteList()
-        for truck_id in range(self.nb_trucks):
+        for truck_x, truck_y in self.trucks:
             truck_sprite = arcade.Sprite("./towtruck.png", 1)
-            x, y = self.position_to_px(0, truck_id)
+            x, y = self.position_to_px(truck_x, truck_y)
             truck_sprite.center_x = x - truck_sprite.width // 2 + 10
             truck_sprite.center_y = y - truck_sprite.height // 2 - 10
             self.truck_list.append(truck_sprite)
