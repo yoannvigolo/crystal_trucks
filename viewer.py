@@ -2,10 +2,10 @@ import arcade
 
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 768
-SCREEN_TITLE = "Cristals VS Trucks"
+SCREEN_TITLE = "Crystals VS Trucks"
 
 
-class CristalsVsTrucksGame(arcade.Window):
+class CrystalsVsTrucksGame(arcade.Window):
     """
     Main application class.
     """
@@ -141,7 +141,7 @@ class CristalsVsTrucksGame(arcade.Window):
 
 def main():
     """Main function"""
-    game = CristalsVsTrucksGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    game = CrystalsVsTrucksGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     game.read_config_file("seed4.sample.txt")  # TODO use argparse
     game.setup()
     arcade.run()
