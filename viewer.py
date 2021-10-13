@@ -1,4 +1,5 @@
 import arcade
+import copy
 
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 768
@@ -15,11 +16,13 @@ class CrystalsVsTrucksGame(arcade.Window):
         self.nb_trucks = 0
         self.grid_width = 0
         self.grid_height = 0
-        self.grid = []
+        self.initial_grid = []
+        self.grid = None
         self.cell_width = 1
         self.cell_height = 1
         self.commands = []
         self.trucks = []
+        self.clock = 0
 
         arcade.set_background_color(arcade.color.AMAZON)
 
@@ -31,14 +34,14 @@ class CrystalsVsTrucksGame(arcade.Window):
         with open(filepath, encoding="utf-8") as file:
             for line in file:
                 if in_grid and not line.startswith("### End Grid ###"):
-                    self.grid.append([])
+                    self.initial_grid.append([])
                     for char in line.strip():
                         if char == " ":
-                            self.grid[-1].append(0)
+                            self.initial_grid[-1].append(0)
                         else:
-                            self.grid[-1].append(int(char))
-                    for x in range(len(self.grid[-1]), self.width):
-                        self.grid[-1].append(0)
+                            self.initial_grid[-1].append(int(char))
+                    for x in range(len(self.initial_grid[-1]), self.width):
+                        self.initial_grid[-1].append(0)
                 elif line.startswith("### End Grid ###"):
                     in_grid = False
                 elif line.startswith("trucks: "):
@@ -58,12 +61,15 @@ class CrystalsVsTrucksGame(arcade.Window):
                     if len(parts) < 2 or parts[1] not in ("DIG", "MOVE", "WAIT"):
                         print("ignore", line, end="")
                     else:
-                        self.commands.append(" ".join(parts))
+                        self.commands.append(parts)
 
     def position_to_px(self, x, y):
         return int((x + 0.5) * self.cell_width), int((y + 0.5) * self.cell_height)
 
     def compute_sprites(self):
+        if self.grid is None:
+            self.grid = copy.deepcopy(self.initial_grid)
+
         self.crystal_list = arcade.SpriteList()
         for cell_x in range(self.grid_width):
             for cell_y in range(self.grid_height):
@@ -114,7 +120,18 @@ class CrystalsVsTrucksGame(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
+        self.clock += delta_time
+        self.grid = copy.deepcopy(self.initial_grid)
+        for command in sorted(self.commands):
+            time, command, *args = command
+            time = float(time)
+            if time < self.clock:
+                self.interpret(command, args)
+
         self.compute_sprites()
+
+    def interpret(self, command, args):
+        pass
 
     def on_key_press(self, key, key_modifiers):
         """
