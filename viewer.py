@@ -42,12 +42,12 @@ class CrystalsVsTrucksGame(arcade.Window):
                             self.initial_grid[-1].append(int(char))
                     for x in range(len(self.initial_grid[-1]), self.width):
                         self.initial_grid[-1].append(0)
+                    self.grid = copy.deepcopy(self.initial_grid)
                 elif line.startswith("### End Grid ###"):
                     in_grid = False
                 elif line.startswith("trucks: "):
                     self.nb_trucks = int(line.split()[-1])
-                    for truck_id in range(self.nb_trucks):
-                        self.trucks.append([0, truck_id])
+                    self.trucks = [[0, truck_id] for truck_id in range(self.nb_trucks)]
                 elif line.startswith("width: "):
                     self.grid_width = int(line.split()[-1])
                     self.cell_width = SCREEN_WIDTH // self.grid_width
@@ -67,9 +67,6 @@ class CrystalsVsTrucksGame(arcade.Window):
         return int((x + 0.5) * self.cell_width), int((y + 0.5) * self.cell_height)
 
     def compute_sprites(self):
-        if self.grid is None:
-            self.grid = copy.deepcopy(self.initial_grid)
-
         self.crystal_list = arcade.SpriteList()
         for cell_x in range(self.grid_width):
             for cell_y in range(self.grid_height):
@@ -121,7 +118,9 @@ class CrystalsVsTrucksGame(arcade.Window):
         need it.
         """
         self.clock += delta_time
+        print("new frame at", self.clock)
         self.grid = copy.deepcopy(self.initial_grid)
+        self.trucks = [[0, truck_id] for truck_id in range(self.nb_trucks)]
         for command in sorted(self.commands):
             time, command, *args = command
             time = float(time)
@@ -164,6 +163,7 @@ class CrystalsVsTrucksGame(arcade.Window):
             truck_x, truck_y = self.trucks[truck_id]
             if x != truck_x or y != truck_y:
                 print("invalid dig command, cannot dig on non current position")
+                print(f"    {truck_id=} {truck_x=} {truck_y=} dig at {x=} {y=}")
                 return
             self.grid[y][x] = max(0, self.grid[y][x] - 1)
         else:
