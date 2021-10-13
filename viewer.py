@@ -15,7 +15,9 @@ class CristalsVsTrucksGame(arcade.Window):
         self.nb_trucks = 0
         self.grid_width = 0
         self.grid_height = 0
-        self.cristals = []
+        self.grid = []
+        self.cell_width = 1
+        self.cell_height = 1
         self.commands = []
 
         arcade.set_background_color(arcade.color.AMAZON)
@@ -28,15 +30,24 @@ class CristalsVsTrucksGame(arcade.Window):
         with open(filepath, encoding="utf-8") as file:
             for line in file:
                 if in_grid and not line.startswith("### End Grid ###"):
-                    pass
+                    self.grid.append([])
+                    for char in line.strip():
+                        if char == " ":
+                            self.grid[-1].append(0)
+                        else:
+                            self.grid[-1].append(int(char))
+                    for x in range(len(self.grid[-1]), self.width):
+                        self.grid[-1].append(0)
                 elif line.startswith("### End Grid ###"):
                     in_grid = False
                 elif line.startswith("trucks: "):
                     self.nb_trucks = int(line.split()[-1])
                 elif line.startswith("width: "):
                     self.grid_width = int(line.split()[-1])
+                    self.cell_width = SCREEN_WIDTH // self.grid_width
                 elif line.startswith("height: "):
                     self.grid_height = int(line.split()[-1])
+                    self.cell_height = SCREEN_HEIGHT // self.grid_height
                 elif line.startswith("### Grid ###"):
                     in_grid = True
                 else:
@@ -59,6 +70,18 @@ class CristalsVsTrucksGame(arcade.Window):
         # This command should happen before we start drawing. It will clear
         # the screen to the background color, and erase what we drew last frame.
         arcade.start_render()
+
+        for y in range(self.grid_height):
+            for x in range(self.grid_width):
+                if self.grid[y][x]:
+                    arcade.draw_text(
+                        str(self.grid[y][x]),
+                        x * self.cell_width,
+                        y * self.cell_height,
+                        arcade.color.BLACK,
+                        font_size=20,
+                        font_name="Kenney Pixel Square",
+                    )
 
         # Call draw() on all your sprite lists below
 
