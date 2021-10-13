@@ -63,8 +63,7 @@ class CrystalsVsTrucksGame(arcade.Window):
     def position_to_px(self, x, y):
         return int((x + 0.5) * self.cell_width), int((y + 0.5) * self.cell_height)
 
-    def setup(self):
-        """Set up the game variables. Call to re-start the game."""
+    def compute_sprites(self):
         self.crystal_list = arcade.SpriteList()
         for cell_x in range(self.grid_width):
             for cell_y in range(self.grid_height):
@@ -93,6 +92,10 @@ class CrystalsVsTrucksGame(arcade.Window):
             truck_sprite.center_y = y - truck_sprite.height // 2 - 10
             self.truck_list.append(truck_sprite)
 
+    def setup(self):
+        """Set up the game variables. Call to re-start the game."""
+        self.compute_sprites()
+
     def on_draw(self):
         """
         Render the screen.
@@ -111,7 +114,7 @@ class CrystalsVsTrucksGame(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
-        pass
+        self.compute_sprites()
 
     def on_key_press(self, key, key_modifiers):
         """
