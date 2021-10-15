@@ -1,7 +1,7 @@
 import arcade
 import copy
 
-# TODO pas plus d'une action par camion par cycle
+# TODO pas plus d'une action par camion par cycle, en limitant le nombre de camions
 # TODO changement de la vitesse avec les flèches verticales
 # TODO déplacement dans le temps avec les flèches horizontales
 # TODO afficher le numéro du tour courant
