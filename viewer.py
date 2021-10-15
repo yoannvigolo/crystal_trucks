@@ -1,6 +1,10 @@
 import arcade
 import copy
 
+# TODO pas plus d'une action par camion par cycle
+# TODO changement de la vitesse avec les flèches verticales
+# TODO déplacement dans le temps avec les flèches horizontales
+
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 768
 SCREEN_TITLE = "Crystals VS Trucks"
