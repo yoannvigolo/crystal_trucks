@@ -4,6 +4,8 @@ import copy
 # TODO pas plus d'une action par camion par cycle
 # TODO changement de la vitesse avec les flèches verticales
 # TODO déplacement dans le temps avec les flèches horizontales
+# TODO afficher le numéro du tour courant
+# TODO afficher le nombre de tours auquel il ne reste plus de cristaux
 
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 768
