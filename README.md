@@ -53,6 +53,15 @@ where:
 - truck_id is the index of the truck
 - arguments are the arguments of the command
 
+For instance:
+
+```
+3 MOVE 1 0 2
+```
+
+means that during the third turn, the truck !#1 moves to cell (x=0, y=2).
+
+
 ## Sample text
 
 ```
