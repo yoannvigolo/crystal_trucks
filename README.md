@@ -1,6 +1,9 @@
 # Crystals VS Trucks
 
-This is a game replay player for a text game.
+This is a game replay player for a text game. With some trucks, you have to collect
+crystals the fastest way.
+
+![screenshot](crystals_vs_trucks.png)
 
 ## Sample text
 
