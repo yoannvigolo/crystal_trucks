@@ -1,10 +1,10 @@
-import arcade
 import copy
+
+import arcade
 
 # TODO fournir le fichier à lire par la ligne de commande
 # TODO pas plus d'une action par camion par cycle, en limitant le nombre de camions
 # TODO changement de la vitesse avec les flèches verticales
-# TODO déplacement dans le temps avec les flèches horizontales
 # TODO afficher le numéro du tour courant
 # TODO afficher le nombre de tours auquel il ne reste plus de cristaux
 # TODO ne pas gérer de commande wait
@@ -243,11 +243,11 @@ class CrystalsVsTrucksGame(arcade.Window):
     def on_key_press(self, key, key_modifiers):
         """
         Called whenever a key on the keyboard is pressed.
-
-        For a full list of keys, see:
-        https://api.arcade.academy/en/latest/arcade.key.html
         """
-        pass
+        if key == arcade.key.LEFT:
+            self.clock = max(0, int(self.clock - 1))
+        elif key == arcade.key.RIGHT:
+            self.clock += 1
 
     def on_key_release(self, key, key_modifiers):
         """

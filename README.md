@@ -8,6 +8,11 @@ crystals the fastest way.
 The images are from https://www.kenney.nl,
 under Creative Commons Zero (CC0) http://creativecommons.org/publicdomain/zero/1.0/.
 
+## Viewer keys
+
+- Left arrow: go back one turn earlier in time
+- Right arrow: go one turn later in time
+
 ## Rules
 
 A game description is provided. For instance:
