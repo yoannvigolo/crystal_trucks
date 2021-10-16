@@ -4,7 +4,6 @@ import arcade
 
 # TODO fournir le fichier à lire par la ligne de commande
 # TODO pas plus d'une action par camion par cycle, en limitant le nombre de camions
-# TODO changement de la vitesse avec les flèches verticales
 # TODO afficher le numéro du tour courant
 # TODO afficher le nombre de tours auquel il ne reste plus de cristaux
 # TODO ne pas gérer de commande wait
@@ -88,6 +87,7 @@ class CrystalsVsTrucksGame(arcade.Window):
         self.commands = []
         self.trucks = []
         self.clock = 0
+        self.clock_factor = 1
 
         arcade.set_background_color(arcade.color.AMAZON)
 
@@ -184,7 +184,7 @@ class CrystalsVsTrucksGame(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
-        self.clock += delta_time
+        self.clock += delta_time * self.clock_factor
         # print("new frame at", self.clock)
         self.grid = copy.deepcopy(self.initial_grid)
         self.trucks = [Truck(0, truck_id) for truck_id in range(self.nb_trucks)]
@@ -248,6 +248,10 @@ class CrystalsVsTrucksGame(arcade.Window):
             self.clock = max(0, int(self.clock - 1))
         elif key == arcade.key.RIGHT:
             self.clock += 1
+        elif key == arcade.key.UP:
+            self.clock_factor *= 1.1
+        elif key == arcade.key.DOWN:
+            self.clock_factor /= 1.1
 
     def on_key_release(self, key, key_modifiers):
         """

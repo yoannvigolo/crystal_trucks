@@ -12,6 +12,8 @@ under Creative Commons Zero (CC0) http://creativecommons.org/publicdomain/zero/1
 
 - Left arrow: go back one turn earlier in time
 - Right arrow: go one turn later in time
+- Up arrow: accelerate time
+- Down arrow: decelerate time
 
 ## Rules
 
