@@ -59,8 +59,25 @@ For instance:
 3 MOVE 1 0 2
 ```
 
-means that during the third turn, the truck !#1 moves to cell (x=0, y=2).
+means that during the third turn, the truck \#1 moves to cell (x=0, y=2).
 
+Below are the possible actions.
+
+### MOVE
+
+```
+turn MOVE truck_id cell_x cell_y
+```
+
+Moves the truck_id-th truck to cell (x=cell_x, y=cell_y). The truck can go through only one cell at a time. If the target cell is to far away, the truck will advance towards the target cell, but will go through only one cell.
+
+### DIG
+
+```
+turn DIG truck_id cell_x cell_y
+```
+
+The truck_id-th truck digs the cell (x=cell_x, y=cell_y). If the truck is not on the target cell, the command is ignored. If the truck is on the target cell, and if at least one crystal is present in the cell, then one crystal is collected.
 
 ## Sample text
 
