@@ -5,6 +5,9 @@ crystals the fastest way.
 
 ![screenshot](crystals_vs_trucks.png)
 
+The images are from https://www.kenney.nl,
+under Creative Commons Zero (CC0) http://creativecommons.org/publicdomain/zero/1.0/.
+
 ## Rules
 
 A game description is provided. For instance:

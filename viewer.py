@@ -1,18 +1,30 @@
 import arcade
 import copy
 
+# TODO fournir le fichier à lire par la ligne de commande
 # TODO pas plus d'une action par camion par cycle, en limitant le nombre de camions
 # TODO changement de la vitesse avec les flèches verticales
 # TODO déplacement dans le temps avec les flèches horizontales
 # TODO afficher le numéro du tour courant
 # TODO afficher le nombre de tours auquel il ne reste plus de cristaux
 # TODO ne pas gérer de commande wait
-# TODO mettre des camions différents
 # TODO fournir un moyen de capture de liaison série
 
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 768
 SCREEN_TITLE = "Crystals VS Trucks"
+
+trucks_images = (
+    "images/towtruck.png",
+    "images/transport.png",
+    "images/truckdark.png",
+    "images/truckdelivery.png",
+    "images/firetruck.png",
+    "images/truckcabin.png",
+    "images/truck.png",
+    "images/truckcabin_vintage.png",
+    "images/suv_closed.png",
+)
 
 
 class Truck:
@@ -127,7 +139,7 @@ class CrystalsVsTrucksGame(arcade.Window):
             for cell_y in range(self.grid_height):
                 if self.grid[cell_y][cell_x] > 0:
                     crystal_sprite = arcade.Sprite(
-                        "./element_blue_polygon_glossy.png", 0.5
+                        "images/element_blue_polygon_glossy.png", 0.5
                     )
                     x, y = self.position_to_px(cell_x, cell_y)
                     crystal_sprite.center_x = x - crystal_sprite.width // 2
@@ -135,7 +147,7 @@ class CrystalsVsTrucksGame(arcade.Window):
                     self.crystal_list.append(crystal_sprite)
                 if self.grid[cell_y][cell_x] > 1:
                     crystal_sprite = arcade.Sprite(
-                        "./element_red_polygon_glossy.png", 0.5
+                        "images/element_red_polygon_glossy.png", 0.5
                     )
                     x, y = self.position_to_px(cell_x, cell_y)
                     crystal_sprite.center_x = x - crystal_sprite.width // 2 + 10
@@ -143,8 +155,8 @@ class CrystalsVsTrucksGame(arcade.Window):
                     self.crystal_list.append(crystal_sprite)
 
         self.truck_list = arcade.SpriteList()
-        for truck in self.trucks:
-            truck_sprite = arcade.Sprite("./towtruck.png", 1.5)
+        for truck_id, truck in enumerate(self.trucks):
+            truck_sprite = arcade.Sprite(trucks_images[truck_id], 1.5)
             x, y = self.position_to_px(*truck.position_at(self.clock))
             truck_sprite.center_x = x - truck_sprite.width // 2 + 10
             truck_sprite.center_y = y - truck_sprite.height // 2 - 10
