@@ -5,6 +5,54 @@ crystals the fastest way.
 
 ![screenshot](crystals_vs_trucks.png)
 
+## Rules
+
+A game description is provided. For instance:
+
+```
+trucks: 6
+width: 28
+height: 11
+### Grid ###
+2   2 1          22       2 
+1   21       2  2      111 1
+  1    2 222   2       2    
+  2     121 11       1  1   
+ 222   21221 2 11112    2 2 
+21 11 21  1  2 22221 21  2  
+ 1   2   222     22 2    122
+ 2 112      1 1121 1 2   1 1
+   12 1 1   1    11 1 2 1112
+2  1 1  1112 1 12   211 22  
+1  1  21       2  2    2  1 
+### End Grid ###
+
+Start!
+```
+
+This means that you have:
+
+- 6 trucks
+- a 28-cell wide crystals grid
+- a 11-cell tall crystals grid
+- the crystals grid content, one character per cell
+  - space: 0 crystal
+  - 1: 1 crystal
+  - 2: 2 crystals
+
+You have to provide commands for the trucks. The command syntax is:
+
+```
+turn ACTION truck_id arguments
+```
+
+where:
+
+- turn is the number of game cycles, each truck can provide a command per turn
+- ACTION is the action done by the truck
+- truck_id is the index of the truck
+- arguments are the arguments of the command
+
 ## Sample text
 
 ```
