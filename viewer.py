@@ -6,7 +6,6 @@ import arcade
 # TODO pas plus d'une action par camion par cycle, en limitant le nombre de camions
 # TODO afficher le numéro du tour courant
 # TODO afficher le nombre de tours auquel il ne reste plus de cristaux
-# TODO ne pas gérer de commande wait
 # TODO fournir un moyen de capture de liaison série
 
 SCREEN_WIDTH = 1024
@@ -125,7 +124,7 @@ class CrystalsVsTrucksGame(arcade.Window):
                     in_grid = True
                 else:
                     parts = line.split()
-                    if len(parts) < 2 or parts[1] not in ("DIG", "MOVE", "WAIT"):
+                    if len(parts) != 5 or parts[1] not in ("DIG", "MOVE"):
                         print("ignore", line, end="")
                     else:
                         self.commands.append(parts)
