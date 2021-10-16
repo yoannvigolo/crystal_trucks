@@ -6,6 +6,9 @@ import copy
 # TODO déplacement dans le temps avec les flèches horizontales
 # TODO afficher le numéro du tour courant
 # TODO afficher le nombre de tours auquel il ne reste plus de cristaux
+# TODO ne pas gérer de commande wait
+# TODO mettre des camions différents
+# TODO fournir un moyen de capture de liaison série
 
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 768
