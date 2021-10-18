@@ -359,7 +359,7 @@ class CommandContent:
 
     @property
     def max_command_turn(self):
-        last_command = max(self.commands, key=lambda c: c[0])
+        last_command = max(self.commands, key=lambda c: int(c[0]))
         return int(last_command[0])
 
 
