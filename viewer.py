@@ -372,6 +372,7 @@ def main():
         type=str,
         help="path of the file containing commands",
         default="",
+        required=True,
     )
     args = parser.parse_args()
 
