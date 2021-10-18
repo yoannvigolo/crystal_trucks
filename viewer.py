@@ -3,7 +3,6 @@ import copy
 
 import arcade
 
-# TODO pas plus d'une action par camion par cycle, en limitant le nombre de camions
 # TODO afficher le nombre de tours auquel il ne reste plus de cristaux
 # TODO fournir un moyen de capture de liaison série
 
@@ -86,6 +85,7 @@ class CrystalsVsTrucksGame(arcade.Window):
         self.trucks = []
         self.clock = 0
         self.clock_factor = 1
+        self.commands_history = {}
 
         arcade.set_background_color(arcade.color.AMAZON)
 
@@ -209,6 +209,22 @@ class CrystalsVsTrucksGame(arcade.Window):
 
     def interpret(self, turn, command, args):
         # print(turn, command, args)
+        if args:
+            truck_id = args[0]
+            history = self.commands_history.get((turn, truck_id))
+            if history is not None and history != (command, args):
+                print(
+                    "invalid command, the truck already did an action at turn",
+                    turn,
+                    command,
+                    args,
+                )
+                # print(self.commands_history)
+                return
+            if not (0 <= int(truck_id) < self.nb_trucks):
+                print("invalid truck ID", command, args)
+                return
+            self.commands_history[(turn, truck_id)] = (command, args)
         if command == "MOVE":
             if len(args) != 3:
                 print("invalid move command, must have 3 arguments", command, args)
