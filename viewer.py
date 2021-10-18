@@ -1,7 +1,10 @@
 import argparse
 import copy
+import time
+import traceback
 
 import arcade
+import serial
 
 # TODO fournir un moyen de capture de liaison série
 
@@ -307,12 +310,25 @@ class CommandContent:
             with open(path, encoding="utf-8") as file:
                 lines = list(file)
         if serial_port is not None:
-            pass  # TODO compute lines
+            print("waiting for data on", serial_port)
+            with serial.Serial(serial_port, 115200, timeout=1) as ser:
+                nb_empty_lines = 0
+                while True:
+                    if nb_empty_lines > 10:
+                        break
+                    line = ser.readline().decode("utf-8").strip()
+                    if line:
+                        print(line)
+                        lines.append(line)
+                        nb_empty_lines = 0
+                    else:
+                        nb_empty_lines += 1
         self._read_config(lines)
 
     def _read_config(self, lines):
         in_grid = False
         for line in lines:
+            line = line.strip()
             if in_grid and not line.startswith("### End Grid ###"):
                 self.grid.append([])
                 for char in line.strip():
@@ -361,7 +377,7 @@ def main():
         metavar="PATH",
         type=str,
         help="path of the file containing commands",
-        default="",
+        default=None,
     )
     input_parser.add_argument(
         "-s",
@@ -369,7 +385,7 @@ def main():
         metavar="COM1",
         type=str,
         help="name of the serial device (115200 8N1)",
-        default="",
+        default=None,
     )
     args = parser.parse_args()
     commands = CommandContent(path=args.input, serial_port=args.serial_port)
