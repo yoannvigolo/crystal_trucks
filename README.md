@@ -8,6 +8,21 @@ crystals the fastest way.
 The images are from https://www.kenney.nl,
 under Creative Commons Zero (CC0) http://creativecommons.org/publicdomain/zero/1.0/.
 
+## Command line interface
+
+```
+usage: viewer.py [-h] (-i PATH | -s COM1)
+
+Viewer for crystals vs trucks.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i PATH, --input PATH
+                        path of the file containing commands
+  -s COM1, --serial-port COM1
+                        name of the serial device (115200 8N1)
+```
+
 ## Viewer keys
 
 - Left arrow: go back one turn earlier in time
