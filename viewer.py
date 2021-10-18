@@ -129,6 +129,11 @@ class CrystalsVsTrucksGameView(arcade.View):
             return sum(sum(line) for line in self.grid)
         return 0
 
+    @property
+    def max_command_turn(self):
+        last_command = max(self.commands, key=lambda c: c[0])
+        return int(last_command[0])
+
     def position_to_px(self, x, y):
         return int((x + 0.5) * self.cell_width), int((y + 0.5) * self.cell_height)
 
@@ -194,7 +199,7 @@ class CrystalsVsTrucksGameView(arcade.View):
         need it.
         """
         self.clock += delta_time * self.clock_factor
-        if self.nb_crystals_left == 0:  # TODO ou si plus de commandes
+        if self.nb_crystals_left == 0 or self.clock > self.max_command_turn + 1:
             score_view = ScoreView(
                 self.window,
                 turn=int(self.clock),
