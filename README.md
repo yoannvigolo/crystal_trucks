@@ -43,6 +43,11 @@ Start!
 This means that you have:
 
 - 6 trucks
+  - the first is at (x=0, y=0)
+  - the second is at (x=0, y=1)
+  - the third is at (x=0, y=2)
+  - …
+  - the n-th is at (x=0, y=n-1)
 - a 28-cell wide crystals grid
 - a 11-cell tall crystals grid
 - the crystals grid content, one character per cell
