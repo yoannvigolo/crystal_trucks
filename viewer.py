@@ -3,7 +3,6 @@ import copy
 
 import arcade
 
-# TODO afficher le nombre de tours auquel il ne reste plus de cristaux
 # TODO fournir un moyen de capture de liaison série
 
 SCREEN_WIDTH = 1024
@@ -195,7 +194,7 @@ class CrystalsVsTrucksGameView(arcade.View):
         need it.
         """
         self.clock += delta_time * self.clock_factor
-        if self.clock > 6:
+        if self.nb_crystals_left == 0:  # TODO ou si plus de commandes
             score_view = ScoreView(
                 self.window,
                 turn=int(self.clock),
