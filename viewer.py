@@ -124,6 +124,12 @@ class CrystalsVsTrucksGameView(arcade.View):
                     else:
                         self.commands.append(parts)
 
+    @property
+    def nb_crystals_left(self):
+        if self.grid is not None:
+            return sum(sum(line) for line in self.grid)
+        return 0
+
     def position_to_px(self, x, y):
         return int((x + 0.5) * self.cell_width), int((y + 0.5) * self.cell_height)
 
@@ -190,7 +196,11 @@ class CrystalsVsTrucksGameView(arcade.View):
         """
         self.clock += delta_time * self.clock_factor
         if self.clock > 6:
-            score_view = ScoreView(self.window)
+            score_view = ScoreView(
+                self.window,
+                turn=int(self.clock),
+                nb_crystals_left=self.nb_crystals_left,
+            )
             self.window.show_view(score_view)
         # print("new frame at", self.clock)
         self.grid = copy.deepcopy(self.initial_grid)
