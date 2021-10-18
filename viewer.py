@@ -4,7 +4,6 @@ import copy
 import arcade
 
 # TODO pas plus d'une action par camion par cycle, en limitant le nombre de camions
-# TODO afficher le numéro du tour courant
 # TODO afficher le nombre de tours auquel il ne reste plus de cristaux
 # TODO fournir un moyen de capture de liaison série
 
@@ -176,6 +175,16 @@ class CrystalsVsTrucksGame(arcade.Window):
 
         self.crystal_list.draw()
         self.truck_list.draw()
+
+        arcade.draw_text(
+            str(int(self.clock)),
+            0,
+            SCREEN_HEIGHT - 50,
+            arcade.color.WHITE,
+            font_size=40,
+            align="right",
+            width=SCREEN_WIDTH - 20,
+        )
 
     def on_update(self, delta_time):
         """
