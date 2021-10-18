@@ -6,7 +6,7 @@ import traceback
 import arcade
 import serial
 
-# TODO fournir un moyen de capture de liaison série
+# TODO mettre la grille dans une classe à part, ne mettre à jour la grille que si on change de tour, pour limiter les calculs
 
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 768
