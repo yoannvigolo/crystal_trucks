@@ -67,61 +67,16 @@ class Truck:
 
 
 class CrystalsVsTrucksGameView(arcade.View):
-    def __init__(self, window=None):
+    def __init__(self, window=None, commands=None):
         super().__init__(window)
-        self.nb_trucks = 0
-        self.grid_width = 0
-        self.grid_height = 0
-        self.initial_grid = []
-        self.grid = None
-        self.cell_width = 1
-        self.cell_height = 1
-        self.commands = []
-        self.trucks = []
+        self.commands: CommandContent = commands
+        self.grid = copy.deepcopy(commands.grid)
+        self.trucks = [Truck(0, truck_id) for truck_id in range(commands.nb_trucks)]
         self.clock = 0
         self.clock_factor = 1
         self.commands_history = {}
 
         arcade.set_background_color(arcade.color.AMAZON)
-
-        # If you have sprite lists, you should create them here,
-        # and set them to None
-
-    def read_config_file(self, filepath):
-        in_grid = False
-        with open(filepath, encoding="utf-8") as file:
-            for line in file:
-                if in_grid and not line.startswith("### End Grid ###"):
-                    self.initial_grid.append([])
-                    for char in line.strip():
-                        if char == " ":
-                            self.initial_grid[-1].append(0)
-                        else:
-                            self.initial_grid[-1].append(int(char))
-                    for _ in range(len(self.initial_grid[-1]), self.grid_width):
-                        self.initial_grid[-1].append(0)
-                    self.grid = copy.deepcopy(self.initial_grid)
-                elif line.startswith("### End Grid ###"):
-                    in_grid = False
-                elif line.startswith("trucks: "):
-                    self.nb_trucks = int(line.split()[-1])
-                    self.trucks = [
-                        Truck(0, truck_id) for truck_id in range(self.nb_trucks)
-                    ]
-                elif line.startswith("width: "):
-                    self.grid_width = int(line.split()[-1])
-                    self.cell_width = SCREEN_WIDTH // self.grid_width
-                elif line.startswith("height: "):
-                    self.grid_height = int(line.split()[-1])
-                    self.cell_height = SCREEN_HEIGHT // self.grid_height
-                elif line.startswith("### Grid ###"):
-                    in_grid = True
-                else:
-                    parts = line.split()
-                    if len(parts) != 5 or parts[1] not in ("DIG", "MOVE"):
-                        print("ignore", line, end="")
-                    else:
-                        self.commands.append(parts)
 
     @property
     def nb_crystals_left(self):
@@ -129,18 +84,15 @@ class CrystalsVsTrucksGameView(arcade.View):
             return sum(sum(line) for line in self.grid)
         return 0
 
-    @property
-    def max_command_turn(self):
-        last_command = max(self.commands, key=lambda c: c[0])
-        return int(last_command[0])
-
     def position_to_px(self, x, y):
-        return int((x + 0.5) * self.cell_width), int((y + 0.5) * self.cell_height)
+        return int((x + 0.5) * self.commands.cell_width), int(
+            (y + 0.5) * self.commands.cell_height
+        )
 
     def compute_sprites(self):
         self.crystal_list = arcade.SpriteList()
-        for cell_x in range(self.grid_width):
-            for cell_y in range(self.grid_height):
+        for cell_x in range(self.commands.grid_width):
+            for cell_y in range(self.commands.grid_height):
                 if self.grid[cell_y][cell_x] > 0:
                     crystal_sprite = arcade.Sprite(
                         "images/element_blue_polygon_glossy.png", 0.5
@@ -199,7 +151,10 @@ class CrystalsVsTrucksGameView(arcade.View):
         need it.
         """
         self.clock += delta_time * self.clock_factor
-        if self.nb_crystals_left == 0 or self.clock > self.max_command_turn + 1:
+        if (
+            self.nb_crystals_left == 0
+            or self.clock > self.commands.max_command_turn + 1
+        ):
             score_view = ScoreView(
                 self.window,
                 turn=int(self.clock),
@@ -207,9 +162,11 @@ class CrystalsVsTrucksGameView(arcade.View):
             )
             self.window.show_view(score_view)
         # print("new frame at", self.clock)
-        self.grid = copy.deepcopy(self.initial_grid)
-        self.trucks = [Truck(0, truck_id) for truck_id in range(self.nb_trucks)]
-        for command in sorted(self.commands):
+        self.grid = copy.deepcopy(self.commands.grid)
+        self.trucks = [
+            Truck(0, truck_id) for truck_id in range(self.commands.nb_trucks)
+        ]
+        for command in sorted(self.commands.commands):
             time, command, *args = command
             time = int(time)
             if time < self.clock:
@@ -234,7 +191,7 @@ class CrystalsVsTrucksGameView(arcade.View):
                 )
                 # print(self.commands_history)
                 return
-            if not (0 <= int(truck_id) < self.nb_trucks):
+            if not (0 <= int(truck_id) < self.commands.nb_trucks):
                 print("invalid truck ID", command, args)
                 return
             self.commands_history[(turn, truck_id)] = (command, args)
@@ -243,13 +200,13 @@ class CrystalsVsTrucksGameView(arcade.View):
                 print("invalid move command, must have 3 arguments", command, args)
                 return
             truck_id, x, y = (int(a) for a in args)
-            if not 0 <= truck_id < self.nb_trucks:
+            if not 0 <= truck_id < self.commands.nb_trucks:
                 print("invalid move command, invalid truck id", command, args)
                 return
-            if not 0 <= x < self.grid_width:
+            if not 0 <= x < self.commands.grid_width:
                 print("invalid move command, invalid x", command, args)
                 return
-            if not 0 <= y < self.grid_height:
+            if not 0 <= y < self.commands.grid_height:
                 print("invalid move command, invalid y", command, args)
                 return
             self.trucks[truck_id].move(turn, x, y)
@@ -258,13 +215,13 @@ class CrystalsVsTrucksGameView(arcade.View):
                 print("invalid dig command, must have 3 arguments", command, args)
                 return
             truck_id, x, y = (int(a) for a in args)
-            if not 0 <= truck_id < self.nb_trucks:
+            if not 0 <= truck_id < self.commands.nb_trucks:
                 print("invalid dig command, invalid truck id", command, args)
                 return
-            if not 0 <= x < self.grid_width:
+            if not 0 <= x < self.commands.grid_width:
                 print("invalid dig command, invalid x", command, args)
                 return
-            if not 0 <= y < self.grid_height:
+            if not 0 <= y < self.commands.grid_height:
                 print("invalid dig command, invalid y", command, args)
                 return
             truck = self.trucks[truck_id]
@@ -289,30 +246,6 @@ class CrystalsVsTrucksGameView(arcade.View):
             self.clock_factor *= 1.1
         elif key == arcade.key.DOWN:
             self.clock_factor /= 1.1
-
-    def on_key_release(self, key, key_modifiers):
-        """
-        Called whenever the user lets off a previously pressed key.
-        """
-        pass
-
-    def on_mouse_motion(self, x, y, delta_x, delta_y):
-        """
-        Called whenever the mouse moves.
-        """
-        pass
-
-    def on_mouse_press(self, x, y, button, key_modifiers):
-        """
-        Called when the user presses a mouse button.
-        """
-        pass
-
-    def on_mouse_release(self, x, y, button, key_modifiers):
-        """
-        Called when a user releases a mouse button.
-        """
-        pass
 
 
 class ScoreView(arcade.View):
@@ -352,18 +285,74 @@ class ScoreView(arcade.View):
         )
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
-        game_view = CrystalsVsTrucksGameView(self.window)
+        game_view = CrystalsVsTrucksGameView(self.window, commands=commands)
         self.window.show_view(game_view)
-        game_view.read_config_file(args.input)
         game_view.setup()
 
 
-args = None
+class CommandContent:
+    def __init__(self, path=None, serial_port=None):
+        if path is None and serial_port is None:
+            print("Either file path or serial port must be configured")
+        self.commands = []
+        self.nb_trucks = 0
+        self.grid_width = 0
+        self.grid_height = 0
+        self.grid = []
+        self.cell_width = 0
+        self.cell_height = 0
+
+        lines = []
+        if path is not None:
+            with open(path, encoding="utf-8") as file:
+                lines = list(file)
+        if serial_port is not None:
+            pass  # TODO compute lines
+        self._read_config(lines)
+
+    def _read_config(self, lines):
+        in_grid = False
+        for line in lines:
+            if in_grid and not line.startswith("### End Grid ###"):
+                self.grid.append([])
+                for char in line.strip():
+                    if char == " ":
+                        self.grid[-1].append(0)
+                    else:
+                        self.grid[-1].append(int(char))
+                for _ in range(len(self.grid[-1]), self.grid_width):
+                    self.grid[-1].append(0)
+            elif line.startswith("### End Grid ###"):
+                in_grid = False
+            elif line.startswith("trucks: "):
+                self.nb_trucks = int(line.split()[-1])
+            elif line.startswith("width: "):
+                self.grid_width = int(line.split()[-1])
+                self.cell_width = SCREEN_WIDTH // self.grid_width
+            elif line.startswith("height: "):
+                self.grid_height = int(line.split()[-1])
+                self.cell_height = SCREEN_HEIGHT // self.grid_height
+            elif line.startswith("### Grid ###"):
+                in_grid = True
+            else:
+                parts = line.split()
+                if len(parts) != 5 or parts[1] not in ("DIG", "MOVE"):
+                    print("ignore", line, end="")
+                else:
+                    self.commands.append(parts)
+
+    @property
+    def max_command_turn(self):
+        last_command = max(self.commands, key=lambda c: c[0])
+        return int(last_command[0])
+
+
+commands = None
 
 
 def main():
     """Main function"""
-    global args
+    global commands
     parser = argparse.ArgumentParser(description="Viewer for crystals vs trucks.")
     input_parser = parser.add_mutually_exclusive_group(required=True)
     input_parser.add_argument(
@@ -383,11 +372,11 @@ def main():
         default="",
     )
     args = parser.parse_args()
+    commands = CommandContent(path=args.input, serial_port=args.serial_port)
 
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    game_view = CrystalsVsTrucksGameView()
+    game_view = CrystalsVsTrucksGameView(commands=commands)
     window.show_view(game_view)
-    game_view.read_config_file(args.input)
     game_view.setup()
     arcade.run()
 
