@@ -304,6 +304,7 @@ class CommandContent:
         self.grid = []
         self.cell_width = 0
         self.cell_height = 0
+        self._max_command_turn = None
 
         lines = []
         if path is not None:
@@ -359,8 +360,10 @@ class CommandContent:
 
     @property
     def max_command_turn(self):
-        last_command = max(self.commands, key=lambda c: int(c[0]))
-        return int(last_command[0])
+        if self._max_command_turn is None:
+            last_command = max(self.commands, key=lambda c: int(c[0]))
+            self._max_command_turn = int(last_command[0])
+        return self._max_command_turn
 
 
 commands = None
