@@ -365,14 +365,22 @@ def main():
     """Main function"""
     global args
     parser = argparse.ArgumentParser(description="Viewer for crystals vs trucks.")
-    parser.add_argument(
+    input_parser = parser.add_mutually_exclusive_group(required=True)
+    input_parser.add_argument(
         "-i",
         "--input",
         metavar="PATH",
         type=str,
         help="path of the file containing commands",
         default="",
-        required=True,
+    )
+    input_parser.add_argument(
+        "-s",
+        "--serial-port",
+        metavar="COM1",
+        type=str,
+        help="name of the serial device (115200 8N1)",
+        default="",
     )
     args = parser.parse_args()
 
