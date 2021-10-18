@@ -1,8 +1,8 @@
+import argparse
 import copy
 
 import arcade
 
-# TODO fournir le fichier à lire par la ligne de commande
 # TODO pas plus d'une action par camion par cycle, en limitant le nombre de camions
 # TODO afficher le numéro du tour courant
 # TODO afficher le nombre de tours auquel il ne reste plus de cristaux
@@ -279,8 +279,19 @@ class CrystalsVsTrucksGame(arcade.Window):
 
 def main():
     """Main function"""
+    parser = argparse.ArgumentParser(description="Viewer for crystals vs trucks.")
+    parser.add_argument(
+        "-i",
+        "--input",
+        metavar="PATH",
+        type=str,
+        help="path of the file containing commands",
+        default="",
+    )
+    args = parser.parse_args()
+
     game = CrystalsVsTrucksGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    game.read_config_file("seed4.sample.txt")  # TODO use argparse
+    game.read_config_file(args.input)
     game.setup()
     arcade.run()
 
