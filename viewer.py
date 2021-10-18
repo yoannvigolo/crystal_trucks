@@ -67,13 +67,9 @@ class Truck:
         return pos_x, pos_y
 
 
-class CrystalsVsTrucksGame(arcade.Window):
-    """
-    Main application class.
-    """
-
-    def __init__(self, width, height, title):
-        super().__init__(width, height, title)
+class CrystalsVsTrucksGameView(arcade.View):
+    def __init__(self, window=None):
+        super().__init__(window)
         self.nb_trucks = 0
         self.grid_width = 0
         self.grid_height = 0
@@ -103,7 +99,7 @@ class CrystalsVsTrucksGame(arcade.Window):
                             self.initial_grid[-1].append(0)
                         else:
                             self.initial_grid[-1].append(int(char))
-                    for _ in range(len(self.initial_grid[-1]), self.width):
+                    for _ in range(len(self.initial_grid[-1]), self.grid_width):
                         self.initial_grid[-1].append(0)
                     self.grid = copy.deepcopy(self.initial_grid)
                 elif line.startswith("### End Grid ###"):
@@ -193,6 +189,9 @@ class CrystalsVsTrucksGame(arcade.Window):
         need it.
         """
         self.clock += delta_time * self.clock_factor
+        if self.clock > 6:
+            score_view = ScoreView(self.window)
+            self.window.show_view(score_view)
         # print("new frame at", self.clock)
         self.grid = copy.deepcopy(self.initial_grid)
         self.trucks = [Truck(0, truck_id) for truck_id in range(self.nb_trucks)]
@@ -233,10 +232,10 @@ class CrystalsVsTrucksGame(arcade.Window):
             if not 0 <= truck_id < self.nb_trucks:
                 print("invalid move command, invalid truck id", command, args)
                 return
-            if not 0 <= x < self.width:
+            if not 0 <= x < self.grid_width:
                 print("invalid move command, invalid x", command, args)
                 return
-            if not 0 <= y < self.height:
+            if not 0 <= y < self.grid_height:
                 print("invalid move command, invalid y", command, args)
                 return
             self.trucks[truck_id].move(turn, x, y)
@@ -248,10 +247,10 @@ class CrystalsVsTrucksGame(arcade.Window):
             if not 0 <= truck_id < self.nb_trucks:
                 print("invalid dig command, invalid truck id", command, args)
                 return
-            if not 0 <= x < self.width:
+            if not 0 <= x < self.grid_width:
                 print("invalid dig command, invalid x", command, args)
                 return
-            if not 0 <= y < self.height:
+            if not 0 <= y < self.grid_height:
                 print("invalid dig command, invalid y", command, args)
                 return
             truck = self.trucks[truck_id]
@@ -302,8 +301,55 @@ class CrystalsVsTrucksGame(arcade.Window):
         pass
 
 
+class ScoreView(arcade.View):
+    def __init__(self, window=None, nb_crystals_left=1000, turn=1000):
+        super().__init__(window)
+        self.nb_crystals_left = nb_crystals_left
+        self.turn = turn
+
+    def on_show(self):
+        arcade.set_background_color(arcade.color.WHITE)
+
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_text(
+            "Score",
+            SCREEN_WIDTH / 2,
+            SCREEN_HEIGHT / 2 + 75,
+            arcade.color.BLACK,
+            font_size=50,
+            anchor_x="center",
+        )
+        arcade.draw_text(
+            f"{self.nb_crystals_left} crystals left",
+            SCREEN_WIDTH / 2,
+            SCREEN_HEIGHT / 2,
+            arcade.color.GRAY,
+            font_size=20,
+            anchor_x="center",
+        )
+        arcade.draw_text(
+            f"after {self.turn} turns",
+            SCREEN_WIDTH / 2,
+            SCREEN_HEIGHT / 2 - 75,
+            arcade.color.GRAY,
+            font_size=20,
+            anchor_x="center",
+        )
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        game_view = CrystalsVsTrucksGameView(self.window)
+        self.window.show_view(game_view)
+        game_view.read_config_file(args.input)
+        game_view.setup()
+
+
+args = None
+
+
 def main():
     """Main function"""
+    global args
     parser = argparse.ArgumentParser(description="Viewer for crystals vs trucks.")
     parser.add_argument(
         "-i",
@@ -315,9 +361,11 @@ def main():
     )
     args = parser.parse_args()
 
-    game = CrystalsVsTrucksGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    game.read_config_file(args.input)
-    game.setup()
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    game_view = CrystalsVsTrucksGameView()
+    window.show_view(game_view)
+    game_view.read_config_file(args.input)
+    game_view.setup()
     arcade.run()
 
 
