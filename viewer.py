@@ -143,8 +143,8 @@ class CrystalsVsTrucksGameView(arcade.View):
             SCREEN_HEIGHT - 50,
             arcade.color.WHITE,
             font_size=40,
-            align="right",
-            width=SCREEN_WIDTH - 20,
+            align="center",
+            width=SCREEN_WIDTH,
         )
 
     def on_update(self, delta_time):
