@@ -5,7 +5,6 @@ import datetime
 import arcade
 import serial
 
-# TODO fix pluriel de crystals sur affichage de score
 # TODO faire une interface graphique pour choisir le port COM
 # TODO mettre la grille dans une classe à part, ne mettre à jour la grille que si on change de tour, pour limiter les calculs
 
@@ -279,8 +278,9 @@ class ScoreView(arcade.View):
             font_size=50,
             anchor_x="center",
         )
+        plural = "s" if self.nb_crystals_left > 1 else ""
         arcade.draw_text(
-            f"{self.nb_crystals_left} crystals left",
+            f"{self.nb_crystals_left} crystal{plural} left",
             SCREEN_WIDTH / 2,
             SCREEN_HEIGHT / 2,
             arcade.color.GRAY,
