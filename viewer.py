@@ -317,7 +317,7 @@ class CommandContent:
                 while True:
                     if nb_empty_lines > 10:
                         break
-                    line = ser.readline().decode("utf-8").strip()
+                    line = ser.readline().decode("utf-8").rstrip()
                     if line:
                         print(line)
                         lines.append(line)
@@ -329,10 +329,10 @@ class CommandContent:
     def _read_config(self, lines):
         in_grid = False
         for line in lines:
-            line = line.strip()
+            line = line.rstrip()
             if in_grid and not line.startswith("### End Grid ###"):
                 self.grid.append([])
-                for char in line.strip():
+                for char in line:
                     if char == " ":
                         self.grid[-1].append(0)
                     else:
