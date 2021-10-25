@@ -1,5 +1,7 @@
 # sample command file
 *.sample.txt
+# serial capture
+serial_*.txt
 
 *pack*
 

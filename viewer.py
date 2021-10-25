@@ -1,13 +1,11 @@
 import argparse
 import copy
-import time
-import traceback
+import datetime
 
 import arcade
 import serial
 
 # TODO fix pluriel de crystals sur affichage de score
-# TODO sauvegarder les commandes de la liaison série dans un fichier nommé avec la date et l'heure
 # TODO faire une interface graphique pour choisir le port COM
 # TODO mettre la grille dans une classe à part, ne mettre à jour la grille que si on change de tour, pour limiter les calculs
 
@@ -323,7 +321,11 @@ class CommandContent:
                 lines = list(file)
         if serial_port is not None:
             print("waiting for data on", serial_port)
-            with serial.Serial(serial_port, 115200, timeout=1) as ser:
+            filename = datetime.datetime.now().strftime("%Y_%m_%d__%H_%M_%S")
+            filename = f"serial_{filename}.txt"
+            with serial.Serial(serial_port, 115200, timeout=1) as ser, open(
+                filename, "w", encoding="utf-8"
+            ) as log:
                 nb_empty_lines = 0
                 while True:
                     if nb_empty_lines > 10:
@@ -331,6 +333,8 @@ class CommandContent:
                     line = ser.readline().decode("utf-8").rstrip()
                     if line:
                         print(line)
+                        log.write(line)
+                        log.write("\r\n")
                         lines.append(line)
                         nb_empty_lines = 0
                     else:
