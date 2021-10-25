@@ -155,6 +155,10 @@ class CrystalsVsTrucksGameView(arcade.View):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
+
+        def extract_time(command):
+            return int(command[0])
+
         self.clock += delta_time * self.clock_factor
         if (
             self.nb_crystals_left == 0
@@ -171,7 +175,7 @@ class CrystalsVsTrucksGameView(arcade.View):
         self.trucks = [
             Truck(0, truck_id) for truck_id in range(self.commands.nb_trucks)
         ]
-        for command in sorted(self.commands.commands):
+        for command in sorted(self.commands.commands, key=extract_time):
             time, command, *args = command
             time = int(time)
             if time < self.clock:
