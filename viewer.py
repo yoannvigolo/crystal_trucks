@@ -7,7 +7,6 @@ import arcade
 import serial
 
 # TODO fix pluriel de crystals sur affichage de score
-# TODO faire une touche pause
 # TODO sauvegarder les commandes de la liaison série dans un fichier nommé avec la date et l'heure
 # TODO faire une interface graphique pour choisir le port COM
 # TODO mettre la grille dans une classe à part, ne mettre à jour la grille que si on change de tour, pour limiter les calculs
@@ -81,6 +80,7 @@ class CrystalsVsTrucksGameView(arcade.View):
         self.trucks = [Truck(0, truck_id) for truck_id in range(commands.nb_trucks)]
         self.clock = 0
         self.clock_factor = 1
+        self.running = True
         self.commands_history = {}
 
         arcade.set_background_color(arcade.color.AMAZON)
@@ -161,7 +161,8 @@ class CrystalsVsTrucksGameView(arcade.View):
         def extract_time(command):
             return int(command[0])
 
-        self.clock += delta_time * self.clock_factor
+        if self.running:
+            self.clock += delta_time * self.clock_factor
         if (
             self.nb_crystals_left == 0
             or self.clock > self.commands.max_command_turn + 1
@@ -257,6 +258,8 @@ class CrystalsVsTrucksGameView(arcade.View):
             self.clock_factor *= 1.1
         elif key == arcade.key.DOWN:
             self.clock_factor /= 1.1
+        elif key == arcade.key.SPACE:
+            self.running = not self.running
 
 
 class ScoreView(arcade.View):

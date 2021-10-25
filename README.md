@@ -29,6 +29,7 @@ optional arguments:
 - Right arrow: go one turn later in time
 - Up arrow: accelerate time
 - Down arrow: decelerate time
+- Space: pause
 
 ## Rules
 
