@@ -6,6 +6,8 @@ import traceback
 import arcade
 import serial
 
+# TODO faire une touche pause
+# TODO sauvegarder les commandes de la liaison série dans un fichier nommé avec la date et l'heure
 # TODO mettre la grille dans une classe à part, ne mettre à jour la grille que si on change de tour, pour limiter les calculs
 
 SCREEN_WIDTH = 1024
