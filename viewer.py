@@ -273,6 +273,8 @@ class ScoreView(arcade.View):
 
     def on_show(self):
         arcade.set_background_color(arcade.color.WHITE)
+        if args.competition:
+            arcade.close_window()
 
     def on_draw(self):
         arcade.start_render()
@@ -388,11 +390,12 @@ class CommandContent:
 
 
 commands = None
+args = None
 
 
 def main():
     """Main function"""
-    global commands
+    global commands, args
     parser = argparse.ArgumentParser(description="Viewer for crystals vs trucks.")
     input_parser = parser.add_mutually_exclusive_group(required=True)
     input_parser.add_argument(
