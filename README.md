@@ -100,7 +100,7 @@ Below are the possible actions.
 turn MOVE truck_id cell_x cell_y
 ```
 
-Moves the truck_id-th truck to cell (x=cell_x, y=cell_y). The truck can go through only one cell at a time. If the target cell is to far away, the truck will advance towards the target cell, but will go through only one cell.
+Moves the truck_id-th truck to cell (x=cell_x, y=cell_y). The truck can go through only one cell at a time. If the target cell is too far away, the truck will advance towards the target cell, but will go through only one cell.
 
 ### DIG
 
