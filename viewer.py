@@ -405,6 +405,12 @@ def main():
         help="name of the serial device (115200 8N1)",
         default=None,
     )
+    parser.add_argument(
+        "-c",
+        "--competition",
+        action="store_true",
+        help="competition mode, gives only the score",
+    )
     args = parser.parse_args()
     commands = CommandContent(path=args.input, serial_port=args.serial_port)
 
@@ -412,6 +418,8 @@ def main():
     game_view = CrystalsVsTrucksGameView(commands=commands)
     window.show_view(game_view)
     game_view.setup()
+    if args.competition:
+        game_view.clock = commands.max_command_turn
     arcade.run()
 
 
