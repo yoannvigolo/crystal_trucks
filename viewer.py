@@ -24,6 +24,9 @@ trucks_images = (
     "images/suv_closed.png",
 )
 
+competition_turns = 0
+competition_nb_crystals_left = 0
+
 
 class Truck:
     def __init__(self, x, y):
@@ -261,9 +264,12 @@ class CrystalsVsTrucksGameView(arcade.View):
 
 class ScoreView(arcade.View):
     def __init__(self, window=None, nb_crystals_left=1000, turn=1000):
+        global competition_nb_crystals_left, competition_turns
         super().__init__(window)
         self.nb_crystals_left = nb_crystals_left
         self.turn = turn
+        competition_turns = turn
+        competition_nb_crystals_left = nb_crystals_left
 
     def on_show(self):
         arcade.set_background_color(arcade.color.WHITE)
@@ -421,6 +427,10 @@ def main():
     if args.competition:
         game_view.clock = commands.max_command_turn
     arcade.run()
+    if args.competition:
+        print()
+        print("turns:", competition_turns)
+        print("nb_crystals_left:", competition_nb_crystals_left)
 
 
 if __name__ == "__main__":
