@@ -5,6 +5,8 @@ import datetime
 import arcade
 import serial
 
+import game
+
 # TODO faire une interface graphique pour choisir le port COM
 # TODO mettre la grille dans une classe à part, ne mettre à jour la grille que si on change de tour, pour limiter les calculs
 
@@ -164,8 +166,8 @@ class CrystalsVsTrucksGameView(arcade.View):
         if self.running:
             self.clock += delta_time * self.clock_factor
         if (
-            self.nb_crystals_left == 0
-            or self.clock > self.commands.max_command_turn + 1
+                self.nb_crystals_left == 0
+                or self.clock > self.commands.max_command_turn + 1
         ):
             score_view = ScoreView(
                 self.window,
@@ -323,6 +325,8 @@ class CommandContent:
         self.cell_height = 0
         self._max_command_turn = None
 
+        game.init_game(1)
+
         lines = []
         if path is not None:
             with open(path, encoding="utf-8") as file:
@@ -332,7 +336,7 @@ class CommandContent:
             filename = datetime.datetime.now().strftime("%Y_%m_%d__%H_%M_%S")
             filename = f"serial_{filename}.txt"
             with serial.Serial(serial_port, 115200, timeout=1) as ser, open(
-                filename, "w", encoding="utf-8"
+                    filename, "w", encoding="utf-8"
             ) as log:
                 nb_empty_lines = 0
                 while True:
